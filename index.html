@@ -3,38 +3,66 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>夜战坦克 · Kid Tank Battle</title>
-<link rel="stylesheet" href="style.css">
+<title>夜战坦克 · 卡牌对战</title>
+<link rel="stylesheet" href="cards.css">
 </head>
 <body>
 <main id="app">
-  <header id="hud">
-    <div class="meter"><span>⚡ 能量</span><div class="bar"><i id="energyBar"></i></div></div>
-    <div class="meter"><span>🏠 基地</span><div class="bar"><i id="baseBar" class="blue"></i></div></div>
-    <div id="waveLbl">第 1 波</div>
-  </header>
-  <div id="stage">
-    <canvas id="c" width="960" height="540" aria-label="战场"></canvas>
-    <div id="bossHud" hidden><b>塔楼重坦 BOSS</b><div class="bar big"><i id="bossBar" class="red"></i></div></div>
-    <div id="title" class="overlay">
-      <h1>夜战坦克</h1>
-      <p class="sub">Kid Tank Battle · 小朋友设计的游戏</p>
-      <ul>
-        <li>点下面的角色按钮，派兵出战（要花⚡能量）</li>
-        <li>守住你的基地，打败最后的 <b>塔楼重坦 Boss</b>！</li>
-        <li>战场会出现：<b>怪兽大嘴</b>和<b>刺猬太阳</b>会伤人；<b>斑点陨石</b>点一下得⚡能量！</li>
-      </ul>
-      <button id="startBtn" class="big-btn">开始战斗</button>
-      <img class="drawing" src="assets/kid-drawing-labeled.jpg" alt="小朋友的原画">
-    </div>
-    <div id="end" class="overlay" hidden>
-      <h1 id="endTitle"></h1><p id="endSub" class="sub"></p>
-      <button id="againBtn" class="big-btn">再来一局</button>
-    </div>
+  <div id="top">
+    <div id="hint">…</div>
+    <button id="rulesBtn" class="mini">? 规则</button>
   </div>
-  <nav id="deck" aria-label="派兵"></nav>
+
+  <section id="enemyHero" class="hero enemy" data-ref="h:e">
+    <img src="assets/tower_tank_red.svg" alt="Boss" class="flip">
+    <div class="hinfo">
+      <b>塔楼重坦 BOSS</b>
+      <small>英雄技能：三炮齐射（⚡2）随机打你 3 个目标，各 1 点</small>
+      <div class="stats"><span id="eMana"></span><span id="eCards"></span></div>
+    </div>
+    <div class="hp" id="eHp">20</div>
+  </section>
+
+  <section id="enemyBoard" class="board" aria-label="敌方战场"></section>
+
+  <div id="mid">
+    <div id="toast"></div>
+    <button id="endBtn">结束回合 ▶</button>
+  </div>
+
+  <section id="playerBoard" class="board" aria-label="我方战场"></section>
+
+  <section id="playerHero" class="hero mine" data-ref="h:p">
+    <img src="assets/hammer_fighter_blue.svg" alt="小队长">
+    <div class="hinfo">
+      <b>小队长（你）</b>
+      <div class="stats"><span id="pMana"></span><span id="pDeck"></span></div>
+    </div>
+    <button id="powerBtn">炮击<br><small>⚡2 · 打1点</small></button>
+    <div class="hp" id="pHp">20</div>
+  </section>
+
+  <section id="hand" aria-label="手牌"></section>
+
+  <div id="title" class="overlay">
+    <h1>夜战坦克</h1>
+    <p class="sub">卡牌对战 · 小朋友设计的角色</p>
+    <ol>
+      <li><b>目标：</b>把对面 Boss <b>塔楼重坦</b> 的血量打到 0。你们都是 20 血。</li>
+      <li><b>能量⚡：</b>每回合多 1 点（最多 10）。点手牌打出它，打出要花能量（牌左上角的数字）。</li>
+      <li><b>随从：</b>打出后站在战场上，<b>下回合</b>才能攻击（有「冲锋」的马上就能）。左下角是攻击，右下角是血量。</li>
+      <li><b>攻击：</b>点一个发光的随从，再点要打的敌人。双方随从会互相受伤！有「嘲讽」的敌人要先打。</li>
+      <li>做完了就点 <b>结束回合</b>，轮到 Boss。</li>
+    </ol>
+    <button id="startBtn" class="big-btn">开始战斗</button>
+    <a class="link" href="classic.html">玩经典即时版 →</a>
+  </div>
+  <div id="end" class="overlay" hidden>
+    <h1 id="endTitle"></h1><p id="endSub" class="sub"></p>
+    <button id="againBtn" class="big-btn">再来一局</button>
+  </div>
 </main>
-<script src="game-core.js"></script>
-<script src="game.js"></script>
+<script src="cards-core.js"></script>
+<script src="cards.js"></script>
 </body>
 </html>

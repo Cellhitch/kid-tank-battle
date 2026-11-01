@@ -1,0 +1,70 @@
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;min-height:100%;background:radial-gradient(ellipse at top,#1b2a5a,#0b1026 70%);color:#fff;font-family:"PingFang SC","Noto Sans CJK SC","Microsoft YaHei",system-ui,sans-serif;touch-action:manipulation}
+#app{position:relative;max-width:980px;margin:0 auto;padding:6px;display:flex;flex-direction:column;gap:6px;min-height:100vh}
+#top{display:flex;gap:8px;align-items:center}
+#hint{flex:1;background:#26305a;border:3px solid #000;border-radius:10px;padding:6px 10px;font-size:.92rem;min-height:36px}
+.mini{font:inherit;font-size:.85rem;background:#f5c542;border:3px solid #000;border-radius:10px;padding:6px 10px;cursor:pointer}
+
+.hero{position:relative;display:flex;align-items:center;gap:10px;background:#1c274f;border:4px solid #000;border-radius:14px;padding:6px 10px}
+.hero img{height:74px;width:70px;object-fit:contain;background:#fff;border-radius:10px;border:3px solid #000}
+.hero img.flip,.minion img.flip{transform:scaleX(-1)}
+.hero.enemy{background:#4a2330}
+.hinfo{flex:1;display:flex;flex-direction:column;gap:2px;font-size:.95rem}
+.hinfo small{opacity:.8;font-size:.72rem}
+.stats{display:flex;gap:12px;font-size:.8rem}
+.hp{width:52px;height:52px;border-radius:50%;background:#c44536;border:4px solid #000;display:grid;place-items:center;font-size:1.4rem;font-weight:800}
+.hero.target,.minion.target{outline:4px solid #ff4d4d;box-shadow:0 0 18px #ff4d4d;cursor:crosshair}
+#powerBtn{font:inherit;font-weight:700;background:#3a6ea5;color:#fff;border:3px solid #000;border-radius:12px;padding:6px 10px;cursor:pointer;line-height:1.15}
+#powerBtn small{font-weight:400;font-size:.7rem}
+#powerBtn:disabled{opacity:.4;cursor:default}
+#powerBtn.sel{outline:4px solid #f5c542}
+
+.board{display:flex;gap:6px;justify-content:center;align-items:flex-start;min-height:124px;padding:4px;border-radius:12px;background:rgba(255,255,255,.05);border:2px dashed #3b4a85}
+.minion{position:relative;width:calc((100% - 30px)/6);max-width:120px;min-width:56px;background:#e9e4d2;color:#111;border:4px solid #000;border-radius:12px;padding:3px 3px 20px;text-align:center;transition:transform .15s}
+.minion img{width:100%;height:60px;object-fit:contain;display:block}
+.minion .nm{font-size:.7rem;font-weight:700;line-height:1.1}
+.minion.taunt{border-color:#555;box-shadow:inset 0 0 0 3px #aab,0 0 0 2px #888}
+.minion.ready.mine{outline:4px solid #5dd35d;box-shadow:0 0 14px #5dd35d;cursor:pointer}
+.minion.selected{outline:4px solid #f5c542;box-shadow:0 0 16px #f5c542}
+.minion.frozen{filter:saturate(.3) brightness(.9) hue-rotate(160deg)}
+.minion .tag{position:absolute;top:-10px;left:50%;transform:translateX(-50%);font-size:.65rem;background:#000;color:#fff;border-radius:8px;padding:1px 6px;white-space:nowrap}
+.badge{position:absolute;bottom:-8px;width:30px;height:30px;border-radius:50%;border:3px solid #000;display:grid;place-items:center;font-weight:800;font-size:.95rem;color:#fff}
+.badge.a{left:-8px;background:#d89a00}.badge.h{right:-8px;background:#c44536}.badge.h.dmg{background:#8a1f14}
+.badge.c{left:-8px;top:-8px;bottom:auto;background:#3a6ea5}
+
+#mid{display:flex;align-items:center;gap:10px}
+#toast{flex:1;font-size:.88rem;opacity:.9;min-height:24px;text-align:right}
+#endBtn{font:inherit;font-weight:800;font-size:1.05rem;background:#f5c542;color:#000;border:4px solid #000;border-radius:14px;padding:10px 22px;cursor:pointer}
+#endBtn.glow{animation:pulse 1s infinite}
+#endBtn:disabled{opacity:.4;animation:none;cursor:default}
+@keyframes pulse{50%{box-shadow:0 0 18px #f5c542}}
+
+#hand{display:flex;gap:6px;justify-content:flex-start;min-height:170px;overflow-x:auto;padding:8px 4px 4px}
+.card{position:relative;flex:0 0 112px;height:162px;background:#e9e4d2;color:#111;border:4px solid #000;border-radius:12px;padding:4px;text-align:center;cursor:pointer;transition:transform .12s}
+.card:hover{transform:translateY(-10px)}
+.card img{width:100%;height:62px;object-fit:contain;background:#fff;border-radius:8px}
+.card .nm{font-weight:800;font-size:.85rem;margin-top:2px}
+.card .tx{font-size:.68rem;line-height:1.25;margin:2px 2px 0;color:#333}
+.card.spell{background:#d9d1f2}
+.card.playable{outline:4px solid #5dd35d;box-shadow:0 0 14px #5dd35d}
+.card.selected{outline:4px solid #f5c542;transform:translateY(-14px)}
+.card.poor{opacity:.6}
+.card .cost{position:absolute;top:-10px;left:-10px;width:32px;height:32px;border-radius:50%;background:#3a6ea5;border:3px solid #000;color:#fff;font-weight:800;display:grid;place-items:center}
+.card .badge{bottom:-10px}
+
+.float{position:absolute;left:50%;top:30%;transform:translateX(-50%);font-weight:900;font-size:1.6rem;color:#ff4d4d;text-shadow:0 2px 0 #000,0 0 6px #000;pointer-events:none;animation:up .9s forwards;z-index:5}
+@keyframes up{to{transform:translate(-50%,-50px);opacity:0}}
+.lunge-up{animation:lu .3s}.lunge-down{animation:ld .3s}
+@keyframes lu{50%{transform:translateY(-34px) scale(1.08)}}@keyframes ld{50%{transform:translateY(34px) scale(1.08)}}
+.pop{animation:pop .3s}@keyframes pop{from{transform:scale(.3);opacity:0}}
+.shake{animation:shake .25s}@keyframes shake{25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+
+.overlay{position:fixed;inset:0;background:rgba(8,12,32,.95);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:16px;text-align:center;z-index:20;overflow:auto}
+.overlay[hidden]{display:none}
+h1{margin:0;font-size:2.4rem;letter-spacing:.2em}.sub{margin:0;opacity:.8}
+ol{text-align:left;max-width:560px;line-height:1.65;margin:4px 0;padding-left:22px;font-size:.98rem}
+.big-btn{font:inherit;font-size:1.3rem;font-weight:700;padding:10px 32px;border-radius:14px;border:4px solid #000;background:#f5c542;color:#000;cursor:pointer}
+.link{color:#9fd0ff;font-size:.9rem}
+@media(max-width:600px){h1{font-size:1.7rem}.card{flex-basis:96px;height:150px}.hero img{height:56px;width:54px}.hinfo small{display:none}.minion img{height:46px}.hp{width:44px;height:44px;font-size:1.1rem}}
+
+#hand .card:first-child{margin-left:auto}#hand .card:last-child{margin-right:auto}

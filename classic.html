@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>夜战坦克 · 经典即时版</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main id="app">
+  <header id="hud">
+    <div class="meter"><span>⚡ 能量</span><div class="bar"><i id="energyBar"></i></div></div>
+    <div class="meter"><span>🏠 基地</span><div class="bar"><i id="baseBar" class="blue"></i></div></div>
+    <div id="waveLbl">第 1 波</div>
+    <a href="index.html" style="color:#f5c542">← 卡牌版</a>
+  </header>
+  <div id="stage">
+    <canvas id="c" width="960" height="540" aria-label="战场"></canvas>
+    <div id="bossHud" hidden><b>塔楼重坦 BOSS</b><div class="bar big"><i id="bossBar" class="red"></i></div></div>
+    <div id="title" class="overlay">
+      <h1>夜战坦克</h1>
+      <p class="sub">Kid Tank Battle · 小朋友设计的游戏</p>
+      <ul>
+        <li>点下面的角色按钮，派兵出战（要花⚡能量）</li>
+        <li>守住你的基地，打败最后的 <b>塔楼重坦 Boss</b>！</li>
+        <li>战场会出现：<b>怪兽大嘴</b>和<b>刺猬太阳</b>会伤人；<b>斑点陨石</b>点一下得⚡能量！</li>
+      </ul>
+      <button id="startBtn" class="big-btn">开始战斗</button>
+      <img class="drawing" src="assets/kid-drawing-labeled.jpg" alt="小朋友的原画">
+    </div>
+    <div id="end" class="overlay" hidden>
+      <h1 id="endTitle"></h1><p id="endSub" class="sub"></p>
+      <button id="againBtn" class="big-btn">再来一局</button>
+    </div>
+  </div>
+  <nav id="deck" aria-label="派兵"></nav>
+</main>
+<script src="game-core.js"></script>
+<script src="game.js"></script>
+</body>
+</html>
