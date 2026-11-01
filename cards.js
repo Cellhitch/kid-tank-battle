@@ -24,7 +24,7 @@
     if (side === 'p' && K.canAttack(s, 'p', m)) cls.push('ready');
     if (sel && sel.mode === 'attack' && sel.id === m.id) cls.push('selected');
     if (targets.has(ref)) cls.push('target');
-    const tag = m.frozen ? '❄ 冻结' : m.taunt ? '🛡 嘲讽' : m.charge ? '⚡ 冲锋' : '';
+    const tag = m.frozen ? '❄ 冻结' : m.taunt ? '🛡 嘲讽' : m.flying ? '✈ 飞行' : m.charge ? '⚡ 冲锋' : '';
     return `<div class="${cls.join(' ')}" data-ref="${ref}">${tag ? `<span class="tag">${tag}</span>` : ''}
       <img src="${art(m.key, side)}" class="${side === 'e' ? 'flip' : ''}" alt=""><div class="nm">${d.name}</div>
       <span class="badge a">${m.atk}</span><span class="badge h ${m.hp < m.maxHp ? 'dmg' : ''}">${m.hp}</span></div>`;
@@ -47,8 +47,8 @@
     const targets = targetRefs();
     $('eHp').textContent = Math.max(0, s.e.hp); $('pHp').textContent = Math.max(0, s.p.hp);
     $('eMana').textContent = crystals('e'); $('pMana').textContent = crystals('p');
-    $('eCards').textContent = `🃏 手牌 ${s.e.hand.length} · 牌库 ${s.e.deck.length}`;
-    $('pDeck').textContent = `牌库 ${s.p.deck.length}`;
+    $('eCards').textContent = `🃏 手牌 ${s.e.hand.length}`;
+    $('pDeck').textContent = '手牌至少 3 张';
     $('enemyHero').classList.toggle('target', targets.has('h:e'));
     $('enemyBoard').innerHTML = s.e.board.map(m => minionHTML(m, 'e', targets)).join('');
     $('playerBoard').innerHTML = s.p.board.map(m => minionHTML(m, 'p', targets)).join('');
@@ -79,7 +79,10 @@
     const evs = s.events; s.events = [];
     for (const e of evs) {
       const sel1 = r => document.querySelector(`[data-ref="${r}"]`);
-      if (e.k === 'dmg') {
+      if (e.k === 'heal') {
+        const el = sel1(e.ref === 'hero' ? 'h:' + e.side : 'm:' + e.ref);
+        if (el) { const f = document.createElement('span'); f.className = 'float heal'; f.textContent = '+' + e.n; el.appendChild(f); setTimeout(() => f.remove(), 900); }
+      } else if (e.k === 'dmg') {
         const el = sel1(e.ref === 'hero' ? 'h:' + e.side : 'm:' + e.ref);
         if (el) { const f = document.createElement('span'); f.className = 'float'; f.textContent = '-' + Math.min(e.n, 99); el.appendChild(f); el.classList.add('shake'); setTimeout(() => { f.remove(); el.classList.remove('shake'); }, 900); }
       } else if (e.k === 'attack') {

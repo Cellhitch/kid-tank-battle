@@ -9,12 +9,57 @@ function put(s, side, key, o = {}) {
   s[side].board.push(m); return m;
 }
 
-test('decks have 20 cards, opening hands 3 (you) and 4+1 draw (Boss), turn 1 has 1 mana', () => {
+test('every deck card exists; heroes start 25 (you) vs 20 (Boss); turn 1 has 1 mana', () => {
   const s = game();
-  assert.equal(Object.values(K.DECK_LIST).reduce((a, b) => a + b), 20);
+  for (const k of Object.keys(K.DECK_LIST)) assert.ok(K.CARDS[k], k);
+  assert.ok(Object.keys(K.CARDS).length >= 19);
+  assert.equal(s.p.hp, 25); assert.equal(s.e.hp, 20);
   assert.equal(s.p.hand.length, 4);   // 3 + the turn-1 draw
-  assert.equal(s.e.hand.length, 4);
+  assert.equal(s.e.hand.length, 3);
   assert.equal(s.p.mana, 1);
+});
+
+test('you always have at least 3 cards to choose from, even after playing many', () => {
+  const s = game();
+  for (let t = 0; t < 40 && !s.over; t++) {
+    s.p.mana = 10;
+    for (let i = 0; i < 8; i++) { const c = s.p.hand.find(h => K.canPlay(s, 'p', h.uid)); if (!c) break; K.playCard(s, 'p', c.uid, s.e.board[0] && s.e.board[0].id); assert.ok(s.p.hand.length >= 3, 'mid-turn hand ' + s.p.hand.length); }
+    if (s.over) break;
+    K.endTurn(s); let n = 0; while (K.aiAct(s, 'e') && n++ < 60 && !s.over); if (!s.over) K.endTurn(s);
+    assert.ok(s.p.hand.length >= 3);
+  }
+});
+
+test('the deck never runs out (it reshuffles)', () => {
+  const s = game(); s.p.deck.length = 0;
+  const before = s.p.hand.length;
+  K.endTurn(s); K.endTurn(s);
+  assert.ok(s.p.hand.length > before - 1 && s.p.deck.length > 0 && !s.over);
+});
+
+test('new roles: flower heals (capped), eye draws, flag buffs, drill hits, plane flies over taunt', () => {
+  const s = game(); s.p.mana = 10; s.p.hp = 10;
+  K.playCard(s, 'p', give(s, 'p', 'bow_flower')); assert.equal(s.p.hp, 14);
+  s.p.hp = 24; K.playCard(s, 'p', give(s, 'p', 'bow_flower')); assert.equal(s.p.hp, 25);
+  const h = s.p.board[0]; const a0 = h.atk; s.p.mana = 10;
+  K.playCard(s, 'p', give(s, 'p', 'flag_tank')); assert.equal(h.atk, a0 + 1);
+  const foe = put(s, 'e', 'cannon_tank'); s.p.mana = 10;
+  K.playCard(s, 'p', give(s, 'p', 'drill_soldier')); assert.equal(foe.hp, 2);
+  const rock = put(s, 'e', 'spotted_rock'); s.p.mana = 10;
+  K.playCard(s, 'p', give(s, 'p', 'fighter_plane'));
+  const plane = s.p.board.find(m => m.key === 'fighter_plane'); plane.ready = true;
+  assert.ok(K.legalAttackTargets(s, 'p', plane).includes('hero'), 'flying ignores taunt');
+  const walker = put(s, 'p', 'cannon_tank');
+  assert.ok(!K.legalAttackTargets(s, 'p', walker).includes('hero'));
+});
+
+test('turret pings at turn start; moon heals; star rain does 5 damage', () => {
+  const s = game(); put(s, 'p', 'rocket_turret');
+  K.endTurn(s); K.endTurn(s);
+  assert.equal(s.e.hp, 19, 'turret hit the only target, the Boss hero');
+  s.p.mana = 10; s.p.hp = 5; const m = put(s, 'p', 'x_giant', { hp: 1 });
+  K.playCard(s, 'p', give(s, 'p', 'moon')); assert.equal(s.p.hp, 9); assert.equal(m.hp, m.maxHp);
+  const before = s.e.hp; K.playCard(s, 'p', give(s, 'p', 'star_rain')); assert.equal(s.e.hp, before - 5);
 });
 
 test('mana grows by 1 each turn up to 10', () => {
@@ -38,7 +83,7 @@ test('new minion is asleep, charge minion can attack right away', () => {
   assert.equal(K.canAttack(s, 'p', tank), false);
   assert.equal(K.canAttack(s, 'p', hammer), true);
   assert.ok(K.attack(s, 'p', hammer.id, 'hero'));
-  assert.equal(s.e.hp, 20 - 3);
+  assert.equal(s.e.hp, 17);
   assert.equal(K.attack(s, 'p', hammer.id, 'hero'), false, 'only one attack per turn');
 });
 
@@ -94,7 +139,7 @@ test('hero power: you pick a target, Boss fires 3 shots; once per turn', () => {
   assert.equal(K.heroPower(s, 'p', 'hero'), false);
   K.endTurn(s); s.e.mana = 5;
   const before = s.p.hp; K.heroPower(s, 'e');
-  assert.equal(s.p.hp, before - 1 + 0 * 1, 'with no minions only the hero can be hit (once)');
+  assert.equal(s.p.hp, before - 1, 'with no minions only the hero can be hit (once)');
 });
 
 test('hero at 0 hp ends the game', () => {
